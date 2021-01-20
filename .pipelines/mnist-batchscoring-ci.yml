@@ -16,7 +16,6 @@ trigger:
     - ml_service/pipelines/mnist_build_parallel_batchscore_pipeline.py
 
 variables:
-- template: diabetes_regression-variables-template.yml
 - group: devopsforai-aml-vg
 
 pool:
