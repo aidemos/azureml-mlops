@@ -190,4 +190,4 @@ def build_batchscore_pipeline():
         exit(1)
 
 if __name__ == "__main__":
-    build_batchscore_pipeline()
+    return build_batchscore_pipeline()
