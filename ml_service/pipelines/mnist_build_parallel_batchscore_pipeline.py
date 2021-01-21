@@ -173,6 +173,7 @@ def build_batchscore_pipeline():
         ws = get_workspace(env)
         compute_target = get_compute(ws)
         input_dataset = get_file_dataset(ws)
+        register_model(ws)
         output_dir = get_output_dir(ws)
         batch_env = get_batch_environment()
         pipeline = get_scoring_pipeline(ws,batch_env,compute_target,input_dataset,output_dir)
