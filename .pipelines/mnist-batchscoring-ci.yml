@@ -43,5 +43,6 @@ stages:
           # Invoke the Python building and publishing a training pipeline
           set pipelineid=python -m ml_service.pipelines.mnist_build_parallel_batchscore_pipeline
           echo %pipelineid%
+          echo "##vso[task.setvariable variable=pipelineid] %pipelineid%"
 
       
