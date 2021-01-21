@@ -184,6 +184,7 @@ def build_batchscore_pipeline():
         )
         pipeline_id_string = published_pipeline.id     
         print(pipeline_id_string)
+        return pipeline_id_string
     except Exception as e:
         print(e)
         exit(1)
