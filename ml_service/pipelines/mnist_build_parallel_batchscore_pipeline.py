@@ -113,10 +113,11 @@ def register_model(
 
     # ### Register the model with Workspace
     model = Model.register(model_path="models/",
-                        model_name="mnist-prs", # this is the name the model is registered as
+                        model_name="mnist", # this is the name the model is registered as
                         tags={'pretrained': "mnist"},
                         description="Mnist trained tensorflow model",
                         workspace=ws)
+    print("model registered")
 
 def get_batch_environment():
     batch_conda_deps = CondaDependencies.create(pip_packages=["tensorflow==1.15.2", "pillow", 
