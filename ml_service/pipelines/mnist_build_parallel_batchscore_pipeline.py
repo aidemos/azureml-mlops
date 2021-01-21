@@ -12,6 +12,7 @@ from azureml.core.model import Model
 from azureml.core import Environment
 from azureml.core.runconfig import CondaDependencies, DEFAULT_CPU_IMAGE
 from azureml.pipeline.core import PipelineParameter
+from azureml.pipeline.core import PublishedPipeline
 from azureml.pipeline.steps import ParallelRunStep, ParallelRunConfig
 from azureml.core import Experiment
 from ml_service.util.env_variables import Env
@@ -189,5 +190,17 @@ def build_batchscore_pipeline():
         print(e)
         exit(1)
 
+def run_pipeline(
+    ws: Workspace,
+    pipelineid: string,
+    ):
+
+    experiment = Experiment(ws, 'digit_identification')
+    published_pipeline = PublishedPipeline.get(workspace=ws, id=pipelineid)
+    pipeline_run = experiment.submit(published_pipeline)
+    print("pipeline run submitted")
+
 if __name__ == "__main__":
-    return build_batchscore_pipeline()
+    pipelineid = build_batchscore_pipeline()
+    run_pipeline()
+    return pipelineid
