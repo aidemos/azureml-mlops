@@ -1,4 +1,4 @@
-# Continuous Integration (CI) pipeline that orchestrates the batch scoring of the diabetes_regression model.
+# Continuous Integration (CI) pipeline that orchestrates the training of the mnist model.
 
 # Trigger this pipeline on model-train pipeline completion
 resources:
@@ -22,16 +22,16 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: 'Batch_Scoring_Pipeline_CI'
-  displayName: 'Batch Scoring Pipeline CI'
+- stage: 'Training_Pipeline_CI'
+  displayName: 'Training Pipeline CI'
   jobs:
-  - job: "Build_Batch_Scoring_Pipeline"
-    displayName: "Build Batch Scoring Pipeline"
+  - job: "Build_Training_Pipeline"
+    displayName: "Build Training Pipeline"
     container: mlops
     timeoutInMinutes: 0
     steps:
     - task: AzureCLI@1
-      displayName: "Publish Batch Scoring Pipeline"
+      displayName: "Publish Training Pipeline"
       name: publish_batchscore
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'        
