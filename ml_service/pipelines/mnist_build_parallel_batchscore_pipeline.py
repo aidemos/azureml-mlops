@@ -201,6 +201,7 @@ def run_pipeline(
     print("pipeline run submitted")
 
 if __name__ == "__main__":
-    pipelineid = build_batchscore_pipeline()
-    run_pipeline()
-    return pipelineid
+    env = Env()
+    ws = get_workspace(env)
+    pipeline_id = build_batchscore_pipeline()
+    run_pipeline(ws,pipeline_id)
