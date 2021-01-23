@@ -114,7 +114,7 @@ def get_training_pipeline(
     source_directory = scripts_folder,
     script_name= script_file,
     arguments=['--data-folder', input_mnist_ds_consumption.as_mount(), '--regularization', 0.5],
-    name="create-dataset",
+    name="mnist-training",
     compute_target=compute_target,
     runconfig=training_run_config
     )
