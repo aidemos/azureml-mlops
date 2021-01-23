@@ -96,6 +96,6 @@ def run_pipeline(
     ):
 
     experiment = Experiment(ws, experiment_name)
-    published_pipeline = PublishedPipeline.get(workspace=ws, id=pipelineid)
+    published_pipeline = PublishedPipeline.get(workspace=ws, id=pipeline_id)
     pipeline_run = experiment.submit(published_pipeline)
     print("pipeline run submitted")
