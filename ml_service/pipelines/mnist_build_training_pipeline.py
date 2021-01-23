@@ -39,13 +39,6 @@ def get_file_dataset(
                                                     create_new_version=True)
     return mnist_file_dataset
 
-# def get_output_dir(
-#     ws: Workspace
-# ):
-#     def_data_store = ws.get_default_datastore()
-#     output_dir = PipelineData(name="inferences", datastore=def_data_store)
-#     return output_dir
-
 def register_model(
     ws: Workspace
 ):
@@ -70,19 +63,9 @@ def register_model(
                         workspace=ws)
     print("model registered")
 
-# def get_training_environment():
-#     training_conda_deps = CondaDependencies.create(pip_packages=['azureml-dataset-runtime[pandas,fuse]', 'azureml-defaults'], conda_packages = ['scikit-learn==0.22.1'])
-#     training_env = Environment(name="training_environment")
-#     training_env.python.conda_dependencies = training_conda_deps
-#     training_env.docker.enabled = True
-#     training_env.docker.base_image = DEFAULT_CPU_IMAGE
-#     return training_env
-
 def get_training_run_config(
     compute_target: ComputeTarget,
 ):
-
-
     aml_run_config = RunConfiguration()
     # `compute_target` as defined in "Azure Machine Learning compute" section above
     aml_run_config.target = compute_target
@@ -119,9 +102,8 @@ def build_training_pipeline():
     Main method that builds and publishes a scoring pipeline.
     """
     try:
-        #env = Env()
-        #ws = get_workspace(env)
-        ws = get_workspace()
+        env = Env()
+        ws = get_workspace(env)
         compute_target = get_compute(ws)
         input_dataset = get_file_dataset(ws)
         training_run_config = get_training_run_config(compute_target)
@@ -148,6 +130,7 @@ def run_pipeline(
     print("pipeline run submitted")
 
 if __name__ == "__main__":
-    ws = get_workspace()
+    env = Env()
+    ws = get_workspace(env)
     pipeline_id = build_training_pipeline()
     run_pipeline(ws,pipeline_id)
