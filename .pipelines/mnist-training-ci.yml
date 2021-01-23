@@ -41,6 +41,6 @@ stages:
           set -e # fail on error
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
           # Invoke the Python building and publishing a training pipeline
-          pip install azureml.opendatasets
+          pip install azureml.opendatasets --user
           python -m ml_service.pipelines.mnist_build_training_pipeline
       
