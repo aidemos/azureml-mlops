@@ -82,4 +82,4 @@ if __name__ == "__main__":
     env = Env()
     ws = get_workspace(env)
     pipeline_id = build_training_pipeline()
-    run_pipeline(ws,pipeline_id)
+    run_pipeline(ws,pipeline_id,"mnist_training")

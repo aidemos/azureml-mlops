@@ -91,10 +91,11 @@ def get_file_dataset(
 
 def run_pipeline(
     ws: Workspace,
-    pipelineid: str,
+    pipeline_id: str,
+    experiment_name:str,
     ):
 
-    experiment = Experiment(ws, 'mnist_training')
+    experiment = Experiment(ws, experiment_name)
     published_pipeline = PublishedPipeline.get(workspace=ws, id=pipelineid)
     pipeline_run = experiment.submit(published_pipeline)
     print("pipeline run submitted")
