@@ -23,21 +23,47 @@ from azureml.core.runconfig import RunConfiguration
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core import Environment 
 
+# def get_file_dataset(
+#     ws: Workspace
+# ):
+
+#     data_folder = os.path.join(os.getcwd(), 'data')
+#     os.makedirs(data_folder, exist_ok=True)
+
+#     mnist_file_dataset = MNIST.get_file_dataset()
+#     mnist_file_dataset.download(data_folder, overwrite=True)
+
+#     mnist_file_dataset = mnist_file_dataset.register(workspace=ws,
+#                                                     name='mnist_opendataset',
+#                                                     description='training and test dataset',
+#                                                     create_new_version=True)
+#     return mnist_file_dataset
+
 def get_file_dataset(
     ws: Workspace
 ):
+    # ### Create a datastore containing sample images
+    account_name = "pipelinedata"
+    datastore_name = "mnist_datastore"
+    container_name = "sampledata"
 
-    data_folder = os.path.join(os.getcwd(), 'data')
-    os.makedirs(data_folder, exist_ok=True)
+    mnist_data = Datastore.register_azure_blob_container(ws, 
+                        datastore_name=datastore_name, 
+                        container_name=container_name, 
+                        account_name=account_name,
+                        overwrite=True)
 
-    mnist_file_dataset = MNIST.get_file_dataset()
-    mnist_file_dataset.download(data_folder, overwrite=True)
+    def_data_store = ws.get_default_datastore()
 
-    mnist_file_dataset = mnist_file_dataset.register(workspace=ws,
-                                                    name='mnist_opendataset',
-                                                    description='training and test dataset',
-                                                    create_new_version=True)
-    return mnist_file_dataset
+    mnist_ds_name = 'mnist_sample_data'
+
+    path_on_datastore = mnist_data.path('mnist')
+    input_mnist_ds = Dataset.File.from_files(path=path_on_datastore, validate=False)
+
+    pipeline_param = PipelineParameter(name="mnist_param", default_value=input_mnist_ds)
+    input_mnist_ds_consumption = DatasetConsumptionConfig("minist_param_config", pipeline_param).as_mount()
+
+    return input_mnist_ds_consumption
 
 def register_model(
     ws: Workspace
