@@ -192,7 +192,7 @@ def build_batchscore_pipeline():
 
 def run_pipeline(
     ws: Workspace,
-    pipelineid: string,
+    pipelineid: str,
     ):
 
     experiment = Experiment(ws, 'digit_identification')
