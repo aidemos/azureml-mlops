@@ -7,6 +7,7 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 
 from azureml.core import Run
+from azureml.core.model import Model
 from utils import load_data
 
 # let user feed in 2 parameters, the dataset to mount or download, and the regularization rate of the logistic regression model
@@ -29,6 +30,7 @@ print(X_train.shape, y_train.shape, X_test.shape, y_test.shape, sep = '\n')
 
 # get hold of the current run
 run = Run.get_context()
+ws = run.experiment.workspace
 
 print('Train a logistic regression model with regularization rate of', args.reg)
 clf = LogisticRegression(C=1.0/args.reg, solver="liblinear", multi_class="auto", random_state=42)
@@ -47,3 +49,10 @@ run.log('accuracy', np.float(acc))
 os.makedirs('outputs', exist_ok=True)
 # note file saved in the outputs folder is automatically uploaded into experiment record
 joblib.dump(value=clf, filename='outputs/sklearn_mnist_model.pkl')
+
+model_name = "sklearn_mnist"
+model = Model.register(model_path="outputs/sklearn_mnist_model.pkl",
+                        model_name=model_name,
+                        tags={"data": "mnist", "model": "classification"},
+                        description="Mnist handwriting recognition",
+                        workspace=ws)
