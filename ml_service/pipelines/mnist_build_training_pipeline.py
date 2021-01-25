@@ -16,11 +16,37 @@ from azureml.pipeline.core import PublishedPipeline
 from azureml.pipeline.steps import ParallelRunStep, ParallelRunConfig, PythonScriptStep
 from azureml.core import Experiment
 from ml_service.util.env_variables import Env
-from ml_service.util.aml_helper import get_workspace, get_compute, get_file_dataset, run_pipeline
+from ml_service.util.aml_helper import get_workspace, get_compute, run_pipeline
 from azureml.opendatasets import MNIST
 from azureml.core.runconfig import RunConfiguration
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core import Environment 
+
+def get_training_dataset(
+    ws: Workspace
+):
+    # ### Create a datastore containing sample images
+    account_name = "pipelinedata"
+    datastore_name = "mnist_datastore"
+    container_name = "sampledata"
+
+    mnist_data = Datastore.register_azure_blob_container(ws, 
+                        datastore_name=datastore_name, 
+                        container_name=container_name, 
+                        account_name=account_name,
+                        overwrite=True)
+
+    def_data_store = ws.get_default_datastore()
+
+    mnist_ds_name = 'mnist_sample_data'
+
+    path_on_datastore = mnist_data.path('mnist')
+    input_mnist_ds = Dataset.File.from_files(path=path_on_datastore, validate=False)
+
+    pipeline_param = PipelineParameter(name="mnist_param", default_value=input_mnist_ds)
+    input_mnist_ds_consumption = DatasetConsumptionConfig("minist_param_config", pipeline_param).as_mount()
+
+    return input_mnist_ds_consumption
 
 def get_training_run_config(
     compute_target: ComputeTarget,
@@ -64,7 +90,7 @@ def build_training_pipeline():
         env = Env()
         ws = get_workspace(env)
         compute_target = get_compute(ws)
-        input_dataset = get_file_dataset(ws)
+        input_dataset = get_training_dataset(ws)
         training_run_config = get_training_run_config(compute_target)
         pipeline = get_training_pipeline(ws,compute_target,input_dataset,training_run_config)
         published_pipeline = pipeline.publish(
