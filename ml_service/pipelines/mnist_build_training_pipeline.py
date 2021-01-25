@@ -77,7 +77,7 @@ def get_training_pipeline(
 
 def build_training_pipeline():
     """
-    Main method that builds and publishes a scoring pipeline.
+    Main method that builds and publishes a training pipeline.
     """
     try:
         env = Env()
@@ -87,7 +87,7 @@ def build_training_pipeline():
         training_run_config = get_training_run_config(compute_target)
         pipeline = get_training_pipeline(ws,compute_target,input_dataset,training_run_config)
         published_pipeline = pipeline.publish(
-            name="mnist_training",#env.scoring_pipeline_name,
+            name="mnist_training",
             description="MNIST Training Pipeline",
         )
         pipeline_id_string = published_pipeline.id     

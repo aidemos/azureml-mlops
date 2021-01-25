@@ -135,7 +135,7 @@ def build_batchscore_pipeline():
         batch_env = get_batch_environment()
         pipeline = get_scoring_pipeline(ws,batch_env,compute_target,input_dataset,output_dir)
         published_pipeline = pipeline.publish(
-            name="image_inferencing",#env.scoring_pipeline_name,
+            name="image_inferencing",
             description="MNIST Batch Scoring Pipeline",
         )
         pipeline_id_string = published_pipeline.id     

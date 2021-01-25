@@ -1,6 +1,5 @@
 # Continuous Integration (CI) pipeline that orchestrates the batch scoring of the mnist model.
 
-# Trigger this pipeline on model-train pipeline completion
 resources:
   containers:
   - container: mlops
