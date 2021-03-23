@@ -111,5 +111,6 @@ condaenv.*
 .DS_Store
 
 #Azure ML
-.azureml
-.amlignore
+*.azureml
+*.amlignore
+azureml/
