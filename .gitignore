@@ -112,3 +112,4 @@ condaenv.*
 
 #Azure ML
 .azureml
+.amlignore
