@@ -1,0 +1,61 @@
+# Continuous Integration (CI) pipeline that orchestrates the deployment of the mnist model to aks.
+resources:
+  containers:
+  - container: mlops
+    image: mcr.microsoft.com/mlops/python:latest
+    
+trigger:
+  branches:
+    include:
+    - aks-deployment
+  paths:
+    include:
+    - ml_service/endpoints
+
+variables:
+- group: devopsforai-aml-vg
+
+stages:
+- stage: 'Deploy_AKS'
+  displayName: 'Deploy to AKS'
+  jobs:
+  - job: "Deploy_AKS"
+    displayName: "Deploy to AKS"
+    container: mlops
+    timeoutInMinutes: 0
+    steps:
+    - task: AzureCLI@1
+      displayName: 'Install AzureML CLI'
+      inputs:
+        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
+        scriptLocation: inlineScript
+        workingDirectory: $(Build.SourcesDirectory)
+        inlineScript: 'az extension add -n azure-cli-ml'
+    - task: AzureCLI@1
+      displayName: 'Create Compute Target'
+      continueOnError: true
+      inputs:
+        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
+        scriptLocation: inlineScript
+        workingDirectory: $(Build.SourcesDirectory)
+        inlineScript: 
+          #export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          az ml computetarget create aks --name $(AKS_COMPUTE_NAME) -g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
+
+    - task: AzureCLI@1
+      displayName: "Deploy to AKS (CLI)"
+      inputs:
+        azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
+        scriptLocation: inlineScript
+        workingDirectory: $(Build.SourcesDirectory)/ml_service/endpoints
+        inlineScript: |
+          set -e # fail on error
+
+          export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          # Invoke the CLI commmand to deploy to AKS
+          az ml model deploy --name $(AKS_DEPLOYMENT_NAME) --model $(MODEL_NAME) \
+          --compute-target $(AKS_COMPUTE_NAME) \
+          --ic inference_config.yml \
+          --dc deployment_config_aks.yml \
+          -g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
+          --overwrite -v

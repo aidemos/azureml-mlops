@@ -109,3 +109,8 @@ condaenv.*
 .mypy_cache/
 
 .DS_Store
+
+#Azure ML
+*.azureml
+*.amlignore
+.azureml/
