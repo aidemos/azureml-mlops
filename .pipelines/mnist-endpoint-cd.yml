@@ -7,7 +7,7 @@ resources:
 trigger:
   branches:
     include:
-    - main
+    - aks-deployment
   paths:
     include:
     - ml_service/endpoints
@@ -26,11 +26,6 @@ stages:
     container: mlops
     timeoutInMinutes: 0
     steps:
-    - template: diabetes_regression-get-model-id-artifact-template.yml
-      parameters:
-        projectId: '$(resources.pipeline.model-train-ci.projectID)'
-        pipelineId: '$(resources.pipeline.model-train-ci.pipelineID)'
-        artifactBuildId: ${{ parameters.artifactBuildId }}
     - task: AzureCLI@1
       displayName: 'Install AzureML CLI'
       inputs:
@@ -43,12 +38,12 @@ stages:
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)/$(SOURCES_DIR_TRAIN)/scoring
+        workingDirectory: $(Build.SourcesDirectory)/ml_service/endpoints
         inlineScript: |
           set -e # fail on error
           
-          az ml model deploy --name $(AKS_DEPLOYMENT_NAME) --model '$(MODEL_NAME):$(get_model.MODEL_VERSION)' \
-          --compute-target $(AKS_COMPUTE_NAME) \
+          az ml model deploy --name mnist-aks --model sklearn_mnist:1 \
+          --compute-target mnist-cluster \
           --ic inference_config.yml \
           --dc deployment_config_aks.yml \
           -g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
