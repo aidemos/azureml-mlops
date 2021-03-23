@@ -53,8 +53,8 @@ stages:
 
           export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
           # Invoke the CLI commmand to deploy to AKS
-          az ml model deploy --name mnist-aks --model sklearn_mnist:1 \
-          --compute-target mnist-cluster \
+          az ml model deploy --name $(AKS_DEPLOYMENT_NAME) --model $(MODEL_NAME) \
+          --compute-target $(AKS_COMPUTE_NAME) \
           --ic inference_config.yml \
           --dc deployment_config_aks.yml \
           -g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
