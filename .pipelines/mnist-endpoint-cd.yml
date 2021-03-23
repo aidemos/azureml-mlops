@@ -33,11 +33,15 @@ stages:
         inlineScript: 'az extension add -n azure-cli-ml'
     - task: AzureCLI@1
       displayName: 'Create Compute Target'
+      continueOnError: true
       inputs:
         azureSubscription: '$(WORKSPACE_SVC_CONNECTION)'
         scriptLocation: inlineScript
         workingDirectory: $(Build.SourcesDirectory)
-        inlineScript: 'az ml computetarget create aks --name mnist-cluster'
+        inlineScript: 
+          export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          az ml computetarget create aks --name mnist-cluster 
+
     - task: AzureCLI@1
       displayName: "Deploy to AKS (CLI)"
       inputs:
@@ -46,10 +50,12 @@ stages:
         workingDirectory: $(Build.SourcesDirectory)/ml_service/endpoints
         inlineScript: |
           set -e # fail on error
-          
+
+          export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          # Invoke the CLI commmand to deploy to AKS
           az ml model deploy --name mnist-aks --model sklearn_mnist:1 \
           --compute-target mnist-cluster \
           --ic inference_config.yml \
           --dc deployment_config_aks.yml \
-          -g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
+          #-g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
           --overwrite -v
