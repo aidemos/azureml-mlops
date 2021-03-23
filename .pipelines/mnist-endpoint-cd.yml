@@ -39,8 +39,8 @@ stages:
         scriptLocation: inlineScript
         workingDirectory: $(Build.SourcesDirectory)
         inlineScript: 
-          export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-          az ml computetarget create aks --name mnist-cluster 
+          #export SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          az ml computetarget create aks --name mnist-cluster -g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
 
     - task: AzureCLI@1
       displayName: "Deploy to AKS (CLI)"
@@ -57,5 +57,5 @@ stages:
           --compute-target mnist-cluster \
           --ic inference_config.yml \
           --dc deployment_config_aks.yml \
-          #-g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
+          -g $(RESOURCE_GROUP) --workspace-name $(WORKSPACE_NAME) \
           --overwrite -v
